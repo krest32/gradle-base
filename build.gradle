@@ -1,0 +1,70 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+
+// 子项目统一管理
+subprojects {
+    // 基本J插件
+    apply plugin: 'java'
+    // 基本JDK配置
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    //指定编辑器
+    apply plugin: 'idea'
+
+    compileJava.options.encoding "UTF-8"
+    compileTestJava.options.encoding "UTF-8"
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = "UTF-8"
+    }
+
+    group = 'org.example'
+    version = '1.0-SNAPSHOT'
+
+    // 设置 maven 仓库信息， 设置完之后，子工程的 build.gradle 文件就可以不用写了
+    repositories {
+        mavenLocal()
+        maven { name "Alibaba"; url "https://maven.aliyun.com/repository/public" }
+        maven { name "Bstek"; url "https://nexus.bsdn.org/content/groups/public/" }
+        mavenCentral()
+    }
+
+    // 可以用来设置子工程的通用依赖
+    dependencies {
+        testImplementation platform('org.junit:junit-bom:5.9.1')
+        testImplementation 'org.junit.jupiter:junit-jupiter'
+        implementation 'log4j:log4j:1.2.17'
+        implementation 'org.projectlombok:lombok:1.18.22'
+        annotationProcessor 'org.projectlombok:lombok:1.18.22'
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+}
+
+project('base-common') {
+    dependencies {
+        implementation 'org.projectlombok:lombok:1.18.22'
+        annotationProcessor 'org.projectlombok:lombok:1.18.22'
+    }
+}
+
+project('test-service1') {
+    dependencies {
+        // 导入项目依赖
+        implementation project(':base-common')
+        // 使用 implementation 不会进行依赖传递
+        implementation 'org.example:base-common:1.0-SNAPSHOT'
+        implementation 'org.springframework.boot:spring-boot-starter-websocket:2.7.14'
+    }
+}
+
+
+
