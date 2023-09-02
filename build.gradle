@@ -63,6 +63,10 @@ project('test-service1') {
         // 使用 implementation 不会进行依赖传递
         implementation 'org.example:base-common:1.0-SNAPSHOT'
         implementation 'org.springframework.boot:spring-boot-starter-websocket:2.7.14'
+        implementation 'mysql:mysql-connector-java:8.0.30'
+        implementation 'com.baomidou:mybatis-plus-boot-starter:3.5.3'
+        implementation 'com.alibaba:fastjson:1.2.75'
+        implementation 'commons-beanutils:commons-beanutils:1.9.4'
     }
 }
 
