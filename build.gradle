@@ -1,9 +1,32 @@
+buildscript {
+    ext {
+        // 设置依赖版本
+        lombok_version = "1.18.20"
+    }
+}
+
 plugins {
     id 'java'
 }
 
 group = 'org.example'
 version = '1.0-SNAPSHOT'
+
+
+// 避免编译乱码
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+// 编译跳过测试
+gradle.taskGraph.whenReady {
+    tasks.each { task ->
+        if (task.name.contains("test")) {
+            task.enabled = false
+        }
+    }
+}
+
 
 // 子项目统一管理
 subprojects {
@@ -39,8 +62,9 @@ subprojects {
         testImplementation platform('org.junit:junit-bom:5.9.1')
         testImplementation 'org.junit.jupiter:junit-jupiter'
         implementation 'log4j:log4j:1.2.17'
-        implementation 'org.projectlombok:lombok:1.18.22'
-        annotationProcessor 'org.projectlombok:lombok:1.18.22'
+        //双引号方式使用变量，在 ext 中声明或 def 关键字声明变量 lombok_version=具体版本
+        implementation "org.projectlombok:lombok:$lombok_version"
+        annotationProcessor "org.projectlombok:lombok:$lombok_version"
     }
 
     test {
@@ -49,8 +73,10 @@ subprojects {
 
 }
 
+
 project('base-common') {
     dependencies {
+        // 新的版本会覆盖
         implementation 'org.projectlombok:lombok:1.18.22'
         annotationProcessor 'org.projectlombok:lombok:1.18.22'
     }
@@ -58,12 +84,16 @@ project('base-common') {
 
 project('test-service1') {
     dependencies {
-        // 导入项目依赖
-        implementation project(':base-common')
         // 使用 implementation 不会进行依赖传递
-        implementation 'org.example:base-common:1.0-SNAPSHOT'
-        implementation 'org.springframework.boot:spring-boot-starter-websocket:2.7.14'
-        implementation 'mysql:mysql-connector-java:8.0.30'
+        implementation project(':base-common')
+        implementation('org.springframework.boot:spring-boot-starter-websocket:2.7.14') {
+            // 进行依赖排除
+            exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat')
+        }
+        //使用　undertow 代替 tomcat
+        implementation 'org.springframework.boot:spring-boot-starter-undertow:2.7.14'
+        // 全量写法
+        implementation(group: 'mysql', name: 'mysql-connector-java', version: '8.0.30')
         implementation 'com.baomidou:mybatis-plus-boot-starter:3.5.3'
         implementation 'com.alibaba:fastjson:1.2.75'
         implementation 'commons-beanutils:commons-beanutils:1.9.4'
