@@ -28,15 +28,14 @@ publishing {
 //                url localMavenRepo
 //            }
 //        3 发布到私服当中
-//        maven{
-//            // 私服地址
-//            url = 'https://xxxx'
-//            // 验证信息
-//            credentials{
-//                // 私服的用户与密码
-//                username 'root'
-//                password '123456'
-//            }
-//        }
+        maven {
+            allowInsecureProtocol = true
+            name "nexus"
+            url "http://witerk.top:8081/repository/maven-release"
+            credentials{
+                username 'admin'
+                password 'xxxx'
+            }
+        }
     }
 }

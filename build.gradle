@@ -2,7 +2,7 @@ buildscript {
     ext {
         // 设置依赖版本
         lombok_version = "1.18.20"
-        springboot_version = "2.7.11"
+        springboot_version = "2.7.13"
         log4j_version = "1.2.17"
         mysql_driver_version = "8.0.30"
         mybatis_plus_version = '3.5.3'
@@ -58,12 +58,17 @@ subprojects {
     version = '1.0-SNAPSHOT'
 
     // 设置 maven 仓库信息， 设置完之后，子工程的 build.gradle 文件就可以不用写了
-    repositories {
-        mavenLocal()
-        maven { name "Alibaba"; url "https://maven.aliyun.com/repository/public" }
-        maven { name "Bstek"; url "https://nexus.bsdn.org/content/groups/public/" }
-        mavenCentral()
-    }
+//    repositories {
+//        mavenLocal()
+//        maven {
+//            allowInsecureProtocol = true
+//            name "nexus"
+//            url "http://witerk.top:8081/repository/maven-public/"
+//        }
+//        maven { name "Alibaba"; url "https://maven.aliyun.com/repository/public" }
+//        maven { name "Bstek"; url "https://nexus.bsdn.org/content/groups/public/" }
+//        mavenCentral()
+//    }
 
     // 可以用来设置子工程的通用依赖
     dependencies {
