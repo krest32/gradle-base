@@ -3,11 +3,16 @@ buildscript {
         // 设置依赖版本
         lombok_version = "1.18.20"
         springboot_version = "2.7.11"
+        log4j_version = "1.2.17"
+        mysql_driver_version = "8.0.30"
+        mybatis_plus_version = '3.5.3'
+        fastjson_version = "1.2.75"
     }
 }
 
 plugins {
     id 'java'
+
 }
 
 group = 'org.example'
@@ -17,7 +22,6 @@ version = '1.0-SNAPSHOT'
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
-
 
 
 // 编译跳过测试
@@ -50,7 +54,7 @@ subprojects {
         options.encoding = "UTF-8"
     }
 
-    group = 'org.example'
+    group = 'org.gradle.base'
     version = '1.0-SNAPSHOT'
 
     // 设置 maven 仓库信息， 设置完之后，子工程的 build.gradle 文件就可以不用写了
@@ -65,7 +69,7 @@ subprojects {
     dependencies {
         testImplementation platform('org.junit:junit-bom:5.9.1')
         testImplementation 'org.junit.jupiter:junit-jupiter'
-        implementation 'log4j:log4j:1.2.17'
+        implementation "log4j:log4j:$log4j_version"
         // 双引号方式使用变量，在 ext 中声明或 def 关键字声明变量 lombok_version=具体版本
         implementation "org.projectlombok:lombok:$lombok_version"
         annotationProcessor "org.projectlombok:lombok:$lombok_version"
@@ -88,8 +92,12 @@ project('base-common') {
 
 project('test-service1') {
     dependencies {
-        // 使用 implementation 不会进行依赖传递
+        // 导入本地项目依赖 方式一：使用 implementation 不会进行依赖传递
         implementation project(':base-common')
+        // 导入本地项目依赖 方式二：依赖打包到本地镜像，然后进行导入
+        // implementation("org.gradle.base:base-common:1.0-SNAPSHOT")
+
+        // 倒入其他依赖
         implementation("org.springframework.boot:spring-boot-starter-web:$springboot_version") {
             // 进行依赖排除
             exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat')
@@ -97,9 +105,9 @@ project('test-service1') {
         //使用　undertow 代替 tomcat
         implementation "org.springframework.boot:spring-boot-starter-undertow:$springboot_version"
         // 全量写法
-        implementation(group: 'mysql', name: 'mysql-connector-java', version: '8.0.30')
-        implementation 'com.baomidou:mybatis-plus-boot-starter:3.5.3'
-        implementation 'com.alibaba:fastjson:1.2.75'
+        implementation(group: 'mysql', name: 'mysql-connector-java', version: "$mysql_driver_version")
+        implementation "com.baomidou:mybatis-plus-boot-starter:$mybatis_plus_version"
+        implementation "com.alibaba:fastjson:$fastjson_version"
     }
 }
 
