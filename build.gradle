@@ -2,6 +2,7 @@ buildscript {
     ext {
         // 设置依赖版本
         lombok_version = "1.18.20"
+        springboot_version = "2.7.11"
     }
 }
 
@@ -12,11 +13,12 @@ plugins {
 group = 'org.example'
 version = '1.0-SNAPSHOT'
 
-
 // 避免编译乱码
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
+
+
 
 // 编译跳过测试
 gradle.taskGraph.whenReady {
@@ -32,6 +34,8 @@ gradle.taskGraph.whenReady {
 subprojects {
     // 基本J插件
     apply plugin: 'java'
+    // maven 打包插件
+    apply plugin: 'maven-publish'
     // 基本JDK配置
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
@@ -62,7 +66,7 @@ subprojects {
         testImplementation platform('org.junit:junit-bom:5.9.1')
         testImplementation 'org.junit.jupiter:junit-jupiter'
         implementation 'log4j:log4j:1.2.17'
-        //双引号方式使用变量，在 ext 中声明或 def 关键字声明变量 lombok_version=具体版本
+        // 双引号方式使用变量，在 ext 中声明或 def 关键字声明变量 lombok_version=具体版本
         implementation "org.projectlombok:lombok:$lombok_version"
         annotationProcessor "org.projectlombok:lombok:$lombok_version"
     }
@@ -86,17 +90,16 @@ project('test-service1') {
     dependencies {
         // 使用 implementation 不会进行依赖传递
         implementation project(':base-common')
-        implementation('org.springframework.boot:spring-boot-starter-websocket:2.7.14') {
+        implementation("org.springframework.boot:spring-boot-starter-web:$springboot_version") {
             // 进行依赖排除
             exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat')
         }
         //使用　undertow 代替 tomcat
-        implementation 'org.springframework.boot:spring-boot-starter-undertow:2.7.14'
+        implementation "org.springframework.boot:spring-boot-starter-undertow:$springboot_version"
         // 全量写法
         implementation(group: 'mysql', name: 'mysql-connector-java', version: '8.0.30')
         implementation 'com.baomidou:mybatis-plus-boot-starter:3.5.3'
         implementation 'com.alibaba:fastjson:1.2.75'
-        implementation 'commons-beanutils:commons-beanutils:1.9.4'
     }
 }
 
